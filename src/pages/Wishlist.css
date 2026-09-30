@@ -1,0 +1,52 @@
+.wishlist-page {
+  background-color: var(--color-cream);
+  min-height: 80vh;
+  padding: 4rem 0 6rem;
+}
+
+.empty-wishlist-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-icon {
+  width: 120px;
+  height: 120px;
+  background-color: var(--color-soft-peach);
+  margin: 0 auto 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlist-grid {
+  margin-top: 2rem;
+}
+
+.wishlist-card {
+  position: relative;
+}
+
+.wishlist-remove-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--color-white);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+  transition: all var(--transition-fast);
+  color: var(--color-brown);
+}
+
+.wishlist-remove-btn:hover {
+  background-color: var(--color-error);
+  color: var(--color-white);
+  transform: scale(1.1);
+}

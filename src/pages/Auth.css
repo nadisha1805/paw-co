@@ -1,0 +1,129 @@
+.auth-page {
+  background-color: var(--color-cream);
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+.auth-container {
+  display: flex;
+  background-color: var(--color-soft-peach);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  max-width: 1000px;
+  width: 100%;
+  min-height: 600px;
+  border: 1px solid var(--color-border);
+}
+
+.auth-container.reverse {
+  flex-direction: row;
+}
+
+.auth-image-side {
+  flex: 1;
+  position: relative;
+  background-color: var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.organic-bg-subtle-alt::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  background-color: var(--color-sage);
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  z-index: 0;
+  animation: morph 8s ease-in-out infinite reverse;
+}
+
+.auth-image {
+  width: 80%;
+  height: 80%;
+  object-fit: cover;
+  border-radius: 50% 50% 40% 60% / 60% 40% 50% 50%;
+  position: relative;
+  z-index: 1;
+  border: 12px solid var(--color-cream);
+  box-shadow: var(--shadow-md);
+}
+
+.auth-form-side {
+  flex: 1;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--color-cream);
+  border-radius: 40px 0 0 40px;
+}
+
+.auth-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-bottom: 2.5rem;
+}
+
+.auth-error {
+  background-color: rgba(211, 47, 47, 0.1);
+  color: var(--color-error);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.auth-submit-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  font-size: 1.1rem;
+}
+
+.forgot-password-link {
+  font-size: 0.875rem;
+  color: var(--color-terracotta);
+  font-weight: 500;
+}
+
+.auth-footer {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.auth-footer a {
+  color: var(--color-terracotta);
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
+  }
+  .auth-image-side {
+    display: none;
+  }
+  .auth-form-side {
+    padding: 2rem;
+  }
+}
