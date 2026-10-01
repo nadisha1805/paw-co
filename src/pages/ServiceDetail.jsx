@@ -166,11 +166,19 @@ const ServiceDetail = () => {
               <p>{pet.breed} ({pet.type})</p>
             </div>
           ))}
-          <div className="col-span-full flex justify-center mt-6">
+          <div className="flex justify-center mt-6 w-full" style={{ gridColumn: '1 / -1' }}>
             <button 
-              className="btn btn-primary px-12"
-              disabled={!selectedPet}
-              onClick={() => setStep('DATE_TIME')}
+              type="button"
+              className={`btn ${selectedPet ? 'btn-primary' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+              style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedPet) {
+                  setStep('DATE_TIME');
+                } else {
+                  alert("Please select a pet for the appointment.");
+                }
+              }}
             >
               Continue
             </button>

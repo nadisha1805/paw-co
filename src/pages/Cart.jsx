@@ -82,9 +82,9 @@ const Cart = () => {
                 <span>${cartTotal.toFixed(2)}</span>
               </div>
               
-              <button className="btn btn-primary btn-full flex justify-between items-center">
+              <Link to="/checkout" className="btn btn-primary btn-full flex justify-between items-center">
                 Proceed to Checkout <ArrowRight size={18} />
-              </button>
+              </Link>
               
               <Link to="/shop" className="continue-shopping-link">
                 or Continue Shopping

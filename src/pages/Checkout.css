@@ -1,0 +1,37 @@
+.checkout-page {
+  /* Inherits from index.css mostly */
+}
+
+.sm-col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+@media (max-width: 640px) {
+  .sm-col-span-2 {
+    grid-column: span 1 / span 1;
+  }
+}
+
+.checkout-sidebar {
+  position: sticky;
+  top: 100px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.alert-error {
+  background-color: #FEF2F2;
+  color: var(--color-error);
+  border: 1px solid #FECACA;
+}

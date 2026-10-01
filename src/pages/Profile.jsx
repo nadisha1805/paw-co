@@ -2,15 +2,20 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDashboard } from '../context/DashboardContext';
-import { LogOut, User, Settings, Package, Heart, Calendar, PawPrint, Trash2, Edit2, Plus, Star } from 'lucide-react';
+import { LogOut, User, Settings, Package, Heart, Calendar, PawPrint, Trash2, Edit2, Plus, Star, Gift, Bell, CheckCircle2 } from 'lucide-react';
 import './Profile.css';
 
 const Profile = () => {
   const { user, logout, updateProfile } = useAuth();
-  const { pets, addPet, editPet, deletePet, appointments, cancelAppointment } = useDashboard();
+  const { 
+    pets, addPet, editPet, deletePet, 
+    appointments, cancelAppointment,
+    orders, subscriptions, cancelSubscription,
+    pawPoints, notifications, markNotificationRead
+  } = useDashboard();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('overview'); // overview, profile, pets, appointments, orders, wishlist, settings
+  const [activeTab, setActiveTab] = useState('overview'); // overview, profile, pets, appointments, orders, subscriptions, points, notifications
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -81,7 +86,7 @@ const Profile = () => {
     return (
       <div className="dashboard-overview profile-card">
         <h2 className="mb-6">Welcome back, {user.name}!</h2>
-        <div className="grid md-grid-cols-2 gap-4">
+        <div className="grid md-grid-cols-3 gap-4">
           <div className="dashboard-card bg-warm-peach">
             <h3 className="flex items-center gap-2 mb-4"><PawPrint size={20} /> My Pack</h3>
             {pets.length > 0 ? (
@@ -103,13 +108,20 @@ const Profile = () => {
             <h3 className="flex items-center gap-2 mb-4"><Calendar size={20} /> Next Appointment</h3>
             {upcomingAppts.length > 0 ? (
               <div>
-                <p className="font-bold">{upcomingAppts[0].serviceName} for {upcomingAppts[0].petName}</p>
-                <p>{upcomingAppts[0].date} at {upcomingAppts[0].time}</p>
+                <p className="font-bold">{upcomingAppts[0].serviceName}</p>
+                <p className="text-sm">{upcomingAppts[0].date}</p>
               </div>
             ) : (
               <p>No upcoming appointments.</p>
             )}
              <button className="btn btn-outline mt-4 text-sm" onClick={() => setActiveTab('appointments')}>View All</button>
+          </div>
+
+          <div className="dashboard-card bg-white border border-border">
+            <h3 className="flex items-center gap-2 mb-4 text-terracotta"><Gift size={20} /> Paw Points</h3>
+            <p className="text-3xl font-bold text-brown mb-2">{pawPoints}</p>
+            <p className="text-sm text-gray-500 mb-4">Points available</p>
+             <button className="btn btn-primary w-full text-sm" onClick={() => setActiveTab('points')}>Redeem Rewards</button>
           </div>
         </div>
       </div>
@@ -193,9 +205,9 @@ const Profile = () => {
         
         <h3 className="mb-4 text-lg">Upcoming</h3>
         {upcoming.length === 0 ? (
-           <div className="text-center py-8 bg-white rounded-lg border border-border mb-8">
-             <p>No upcoming appointments.</p>
-             <button onClick={() => navigate('/services')} className="btn btn-primary mt-4">Explore Services</button>
+           <div className="text-center py-8 bg-gray-50 rounded-lg border-dashed border-2 border-border mb-8">
+             <p className="mb-4">No upcoming appointments.</p>
+             <button onClick={() => navigate('/services')} className="btn btn-primary">Explore Services</button>
            </div>
         ) : (
           <div className="space-y-4 mb-8">
@@ -233,6 +245,153 @@ const Profile = () => {
              </div>
            ))}
          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderOrders = () => (
+    <div className="dashboard-orders profile-card">
+      <h2 className="mb-6 border-b border-border pb-4">Order History</h2>
+      {orders.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-lg border-dashed border-2 border-border">
+          <Package size={48} className="mx-auto mb-4" style={{color: 'var(--color-sage)'}} />
+          <h3 className="mb-2">No orders yet</h3>
+          <p className="mb-4 text-gray-500">Your pet's shopping adventure starts here.</p>
+          <button onClick={() => navigate('/shop')} className="btn btn-primary">Explore Products</button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {orders.map(order => (
+            <div key={order.id} className="bg-white p-6 rounded-lg shadow-sm border border-border">
+              <div className="flex justify-between items-start mb-4 border-b border-gray-100 pb-4">
+                <div>
+                  <h4 className="m-0 text-brown">Order #{order.id}</h4>
+                  <p className="text-sm text-gray-500">{new Date(order.orderDate).toLocaleDateString()}</p>
+                </div>
+                <div className="text-right">
+                  <span className="font-bold text-terracotta">${order.total.toFixed(2)}</span>
+                  <br/>
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-sage text-brown mt-1">CONFIRMED</span>
+                </div>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {order.items.map((item, idx) => (
+                  <div key={idx} className="flex-shrink-0 w-16 text-center">
+                    <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-md mb-1" />
+                    <span className="text-xs text-gray-500">Qty: {item.quantity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderSubscriptions = () => (
+    <div className="dashboard-subscriptions profile-card">
+      <h2 className="mb-6 border-b border-border pb-4">My Subscriptions</h2>
+      {subscriptions.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-lg border-dashed border-2 border-border">
+          <Heart size={48} className="mx-auto mb-4" style={{color: 'var(--color-sage)'}} />
+          <h3 className="mb-2">No active subscriptions</h3>
+          <p className="mb-4 text-gray-500">You don't have an active Paw Box yet.</p>
+          <button onClick={() => navigate('/subscriptions')} className="btn btn-primary">Explore Paw Boxes</button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {subscriptions.map(sub => (
+            <div key={sub.id} className="bg-white p-6 rounded-lg shadow-sm border border-border flex justify-between items-center">
+              <div className="flex gap-4 items-center">
+                <img src={sub.image} alt={sub.name} className="w-20 h-20 object-cover rounded-md" />
+                <div>
+                  <h4 className="m-0 text-brown">{sub.name}</h4>
+                  <p className="text-sm text-gray-500">{sub.frequency} • ${sub.price}</p>
+                  <p className="text-xs mt-1">Started: {new Date(sub.startDate).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                 <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${sub.status === 'Active' ? 'bg-sage text-brown' : 'bg-gray-200 text-gray-600'}`}>
+                   {sub.status.toUpperCase()}
+                 </span>
+                 <br/>
+                 {sub.status === 'Active' && (
+                   <button 
+                     onClick={() => {
+                       if(window.confirm("Are you sure you want to cancel this subscription?")) {
+                         cancelSubscription(sub.id);
+                       }
+                     }} 
+                     className="text-sm text-error underline hover:text-red-700"
+                   >
+                     Cancel
+                   </button>
+                 )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderPoints = () => (
+    <div className="dashboard-points profile-card text-center py-12">
+      <div className="w-24 h-24 bg-warm-peach rounded-full flex items-center justify-center mx-auto mb-6 text-terracotta shadow-sm">
+        <Gift size={48} />
+      </div>
+      <h2 className="mb-2">Your Paw Points</h2>
+      <p className="text-5xl font-bold text-brown mb-4">{pawPoints}</p>
+      <p className="text-gray-500 mb-8 max-w-md mx-auto">Earn 1 Paw Point for every dollar spent. Redeem points for discounts during checkout!</p>
+
+      <div className="grid sm-grid-cols-3 gap-4 text-left">
+        <div className="bg-white p-4 rounded-lg border border-border">
+          <h4 className="text-lg mb-1">100 Points</h4>
+          <p className="text-terracotta font-bold">$5 OFF</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg border border-border">
+          <h4 className="text-lg mb-1">250 Points</h4>
+          <p className="text-terracotta font-bold">$15 OFF</p>
+        </div>
+        <div className="bg-white p-4 rounded-lg border border-border">
+          <h4 className="text-lg mb-1">500 Points</h4>
+          <p className="text-terracotta font-bold">$35 OFF</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderNotifications = () => {
+    const unreadCount = notifications.filter(n => !n.read).length;
+    return (
+      <div className="dashboard-notifications profile-card">
+        <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
+          <h2 className="m-0 flex items-center gap-2">Notifications {unreadCount > 0 && <span className="bg-terracotta text-white text-xs px-2 py-1 rounded-full">{unreadCount}</span>}</h2>
+        </div>
+        
+        {notifications.length === 0 ? (
+          <div className="text-center py-12">
+            <Bell size={48} className="mx-auto mb-4 text-gray-300" />
+            <p className="text-gray-500">You're all caught up 🐾</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {notifications.map(notif => (
+              <div 
+                key={notif.id} 
+                className={`p-4 rounded-lg border ${notif.read ? 'bg-white border-gray-100 opacity-75' : 'bg-warm-peach border-border shadow-sm'} cursor-pointer`}
+                onClick={() => { if(!notif.read) markNotificationRead(notif.id); }}
+              >
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className={`m-0 ${!notif.read ? 'text-terracotta' : 'text-gray-700'}`}>{notif.title}</h4>
+                  <span className="text-xs text-gray-500">{new Date(notif.date).toLocaleString()}</span>
+                </div>
+                <p className="text-sm text-gray-700 m-0">{notif.message}</p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     );
@@ -294,20 +453,29 @@ const Profile = () => {
           
           <nav className="profile-nav">
             <button className={`profile-nav-link ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}><Star size={18} /> Overview</button>
+            <button className={`profile-nav-link ${activeTab === 'orders' ? 'active' : ''}`} onClick={() => setActiveTab('orders')}><Package size={18} /> Order History</button>
+            <button className={`profile-nav-link ${activeTab === 'subscriptions' ? 'active' : ''}`} onClick={() => setActiveTab('subscriptions')}><Heart size={18} /> Subscriptions</button>
             <button className={`profile-nav-link ${activeTab === 'pets' ? 'active' : ''}`} onClick={() => setActiveTab('pets')}><PawPrint size={18} /> My Pets</button>
             <button className={`profile-nav-link ${activeTab === 'appointments' ? 'active' : ''}`} onClick={() => setActiveTab('appointments')}><Calendar size={18} /> Appointments</button>
+            <button className={`profile-nav-link ${activeTab === 'points' ? 'active' : ''}`} onClick={() => setActiveTab('points')}><Gift size={18} /> Paw Points</button>
+            <button className={`profile-nav-link ${activeTab === 'notifications' ? 'active' : ''}`} onClick={() => setActiveTab('notifications')}>
+               <Bell size={18} /> Notifications 
+               {notifications.filter(n => !n.read).length > 0 && <span className="bg-terracotta text-white rounded-full w-5 h-5 flex items-center justify-center text-xs ml-auto">{notifications.filter(n => !n.read).length}</span>}
+            </button>
             <button className={`profile-nav-link ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}><User size={18} /> Profile Details</button>
-            <button className={`profile-nav-link ${activeTab === 'orders' ? 'active' : ''}`} onClick={() => setActiveTab('orders')}><Package size={18} /> Order History</button>
             <button className={`profile-nav-link text-error`} onClick={handleLogout}><LogOut size={18} /> Sign Out</button>
           </nav>
         </aside>
 
         <main className="profile-content flex-1">
           {activeTab === 'overview' && renderOverview()}
-          {activeTab === 'profile' && renderProfileDetails()}
+          {activeTab === 'orders' && renderOrders()}
+          {activeTab === 'subscriptions' && renderSubscriptions()}
           {activeTab === 'pets' && renderPets()}
           {activeTab === 'appointments' && renderAppointments()}
-          {activeTab === 'orders' && <div className="bg-white p-8 rounded-lg text-center"><p>Order history will appear here.</p></div>}
+          {activeTab === 'points' && renderPoints()}
+          {activeTab === 'notifications' && renderNotifications()}
+          {activeTab === 'profile' && renderProfileDetails()}
         </main>
       </div>
     </div>

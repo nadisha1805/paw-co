@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
 import Wishlist from './pages/Wishlist';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -17,6 +18,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Services from './pages/Services';
 import ServiceDetail from './pages/ServiceDetail';
+import Subscriptions from './pages/Subscriptions';
 
 function App() {
   return (
@@ -32,7 +34,9 @@ function App() {
                   <Route path="product/:id" element={<ProductDetail />} />
                   <Route path="services" element={<Services />} />
                   <Route path="services/:id" element={<ServiceDetail />} />
+                  <Route path="subscriptions" element={<Subscriptions />} />
                   <Route path="cart" element={<Cart />} />
+                  <Route path="checkout" element={<Checkout />} />
                   <Route path="wishlist" element={<Wishlist />} />
                   <Route path="login" element={<Login />} />
                   <Route path="register" element={<Register />} />
