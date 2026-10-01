@@ -7,9 +7,20 @@ import './Header.css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { cartCount } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
 
   const handleUserClick = () => {
     if (user) {
@@ -30,9 +41,10 @@ const Header = () => {
           <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)}>HOME</Link>
           <div className="nav-item-dropdown">
             <Link to="/shop" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-              SHOP <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              SHOP
             </Link>
           </div>
+          <Link to="/services" className="nav-link" onClick={() => setIsMenuOpen(false)}>SERVICES</Link>
           <Link to="/about" className="nav-link" onClick={() => setIsMenuOpen(false)}>ABOUT US</Link>
           <Link to="/contact" className="nav-link" onClick={() => setIsMenuOpen(false)}>CONTACT</Link>
         </nav>
@@ -42,9 +54,25 @@ const Header = () => {
         </Link>
 
         <div className="header-icons">
-          <button className="icon-btn search-btn">
-            <Search size={22} strokeWidth={1.5} />
-          </button>
+          {isSearchOpen ? (
+            <form onSubmit={handleSearchSubmit} className="header-search-form">
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..." 
+                className="header-search-input"
+                autoFocus
+              />
+              <button type="button" onClick={() => setIsSearchOpen(false)} className="close-search-btn">
+                <X size={16} />
+              </button>
+            </form>
+          ) : (
+            <button className="icon-btn search-btn" onClick={() => setIsSearchOpen(true)}>
+              <Search size={22} strokeWidth={1.5} />
+            </button>
+          )}
           <Link to="/wishlist" className="icon-btn">
             <Heart size={22} strokeWidth={1.5} />
           </Link>

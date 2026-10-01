@@ -158,3 +158,32 @@
     grid-template-columns: 1fr;
   }
 }
+
+.dashboard-card {
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  height: 100%;
+}
+
+.bg-warm-peach {
+  background-color: var(--color-warm-peach);
+}
+
+.bg-sage {
+  background-color: var(--color-sage);
+}
+
+.appt-card, .pet-card {
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.appt-card.history {
+  background-color: #f9fafb;
+  opacity: 0.8;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}

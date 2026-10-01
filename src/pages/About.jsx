@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import founderImg from '../assets/founder.png';
 
 const About = () => {
   return (
@@ -18,7 +19,8 @@ const About = () => {
             <div style={{ position: 'relative', height: '100%', minHeight: '400px', display: 'flex', alignItems: 'center' }}>
               <div className="organic-bg" style={{ position: 'absolute', top: '5%', left: '-5%', width: '100%', height: '100%', backgroundColor: 'var(--color-sage)', zIndex: -1, borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }}></div>
               <img 
-                src="/images/about/founder.png" 
+                src={founderImg} 
+
                 alt="Founder with dog" 
                 style={{ 
                   width: '100%', 

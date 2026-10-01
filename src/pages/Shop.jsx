@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
@@ -7,10 +7,23 @@ import { useWishlist } from '../context/WishlistContext';
 import './Shop.css';
 
 const Shop = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [activeCategory, setActiveCategory] = useState('All');
   const [activePetType, setActivePetType] = useState('All');
   const [sortBy, setSortBy] = useState('featured');
+
+  useEffect(() => {
+    if (searchParams.get('search') !== null) {
+      setSearchTerm(searchParams.get('search'));
+    }
+  }, [searchParams]);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setSearchParams(value ? { search: value } : {});
+  };
   
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -58,7 +71,7 @@ const Shop = () => {
                 type="text" 
                 placeholder="Search products..." 
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
                 className="search-input"
               />
             </div>

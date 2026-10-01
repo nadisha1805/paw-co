@@ -4,13 +4,19 @@ import { ArrowLeft, Check, Truck, Shield } from 'lucide-react';
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
+import { Star } from 'lucide-react';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [productReviews, setProductReviews] = useState([]);
   
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -19,6 +25,13 @@ const ProductDetail = () => {
     const found = products.find(p => p.id === id);
     if (found) {
       setProduct(found);
+      // Dummy reviews if not present
+      if(!found.reviewList) {
+        found.reviewList = [
+          { id: 1, author: "Jane D.", rating: 5, text: "My pet absolutely loves this! Will buy again.", date: "2023-10-01" }
+        ];
+      }
+      setProductReviews(found.reviewList);
     } else {
       navigate('/shop');
     }
@@ -29,6 +42,17 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
+  };
+
+  const submitReview = (e) => {
+    e.preventDefault();
+    if(reviewText.trim() === '') return;
+    const newReview = { id: Date.now(), author: user.name, rating: reviewRating, text: reviewText, date: new Date().toISOString().split('T')[0] };
+    const newReviews = [newReview, ...productReviews];
+    setProductReviews(newReviews);
+    product.reviewList = newReviews;
+    setReviewText('');
+    setReviewRating(5);
   };
 
   return (
@@ -115,6 +139,38 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="product-reviews-section mt-16 w-full">
+          <h2>Customer Reviews</h2>
+          <div className="reviews-list mt-6 grid md-grid-cols-2 gap-4">
+            {productReviews.length > 0 ? productReviews.map(review => (
+              <div key={review.id} className="review-card bg-white p-6 rounded-lg shadow-sm border border-border">
+                <div className="flex justify-between items-center mb-2">
+                  <strong>{review.author}</strong>
+                  <span className="text-sm text-gray-500">{review.date}</span>
+                </div>
+                <div className="flex text-yellow-400 mb-2">
+                  {[...Array(5)].map((_, i) => <Star key={i} size={16} fill={i < review.rating ? "currentColor" : "none"} />)}
+                </div>
+                <p className="text-gray-700">{review.text}</p>
+              </div>
+            )) : <p>No reviews yet. Be the first to share your experience!</p>}
+          </div>
+
+          {user && (
+            <form onSubmit={submitReview} className="mt-8 review-form bg-warm-peach p-6 rounded-lg max-w-2xl">
+              <h3>Leave a Review</h3>
+              <div className="flex gap-2 my-2">
+                {[1,2,3,4,5].map(star => (
+                  <button type="button" key={star} onClick={() => setReviewRating(star)} className={`text-${star <= reviewRating ? 'yellow' : 'gray'}-500`}>
+                    <Star size={24} fill={star <= reviewRating ? "currentColor" : "none"} />
+                  </button>
+                ))}
+              </div>
+              <textarea className="input-field w-full mt-2" rows="4" placeholder="What did you think of this product?" value={reviewText} onChange={e => setReviewText(e.target.value)} required></textarea>
+              <button type="submit" className="btn btn-primary mt-4">Submit Review</button>
+            </form>
+          )}
         </div>
       </div>
     </div>
